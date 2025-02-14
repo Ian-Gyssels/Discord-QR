@@ -7,13 +7,25 @@ module.exports = {
         .addStringOption(option => option
             .setName('link')
             .setDescription('The link you want to generate a QR code for')
-            .setRequired(true)),
+            .setRequired(true))
+            .addNumberOption(option => option
+                .setName('size')
+                .setDescription('The size of the QR code (in pixels)')
+                .setMinValue(100)
+                .setMaxValue(500)),
 	async execute(interaction) {
 		const link = interaction.options.getString('link');
-        
-        console.log(link); 
+        const size = interaction.options.getNumber('size');
 
-        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(link)}`;
+        console.log(size); 
+
+        let qrCodeUrl;
+        if(size){
+            qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(link)}`;
+        } else {
+            qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(link)}`;
+        }
+
 
         await interaction.reply({files: [{ attachment: qrCodeUrl, name: 'qrcode.png' }] });
 	},
