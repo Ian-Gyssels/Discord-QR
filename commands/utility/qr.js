@@ -1,6 +1,8 @@
 const { SlashCommandBuilder, SlashCommandStringOption } = require('discord.js');
+const {isValidUrl} = require('../../util/UrlValidator');
 
 module.exports = {
+    
 	data: new SlashCommandBuilder()
 		.setName('qr')
 		.setDescription('Generates a QR code from a link')
@@ -17,9 +19,13 @@ module.exports = {
 		const link = interaction.options.getString('link');
         const size = interaction.options.getNumber('size');
 
-        console.log(size); 
-
+        let url;
         let qrCodeUrl;
+
+        if(!isValidUrl(link)){
+            return interaction.reply('Invalid link provided. Please provide a valid URL.');
+        }
+
         if(size){
             qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(link)}`;
         } else {
